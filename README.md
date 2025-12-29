@@ -12,6 +12,11 @@ This system tackles the problem of **polypharmacy** (taking too many medications
 4. Avoids **Metabolic Conflicts** (CYP450 Inhibitor/Inducer clashes).
 5. Respects **Route of Administration** (e.g., Eye drops for Glaucoma vs. Pills for Hypertension).
 
+![Homepage](frontend/public/homepage.png)
+![Graph View](frontend/public/graph.png)
+![Drug Details](frontend/public/detailed_list.png)
+
+
 ## 🚀 Key Features
 
 * **Hybrid Optimization Engine:**
