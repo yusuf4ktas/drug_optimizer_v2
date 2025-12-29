@@ -1,0 +1,5 @@
+/data
+/.venv
+drug_project.db
+__pycache__/
+/.idea
