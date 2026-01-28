@@ -51,17 +51,11 @@ export default function App() {
 
       const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
-// NOTE: If you are using Vite, use this line instead:
-// const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
-
       try {
           let data;
           let conditionsForGraph = conditions; // Default to manual list
 
-          // Call the appropriate endpoint based on input type
           if (inputType === 'text') {
-              // NLP Mode
-              // CHANGE: Use API_BASE_URL variable
               const response = await fetch(`${API_BASE_URL}/optimize/text`, {
                   method: 'POST',
                   headers: {'Content-Type': 'application/json'},
@@ -79,8 +73,6 @@ export default function App() {
                   conditionsForGraph = data.nlp_source_entities;
               }
           } else {
-              // Manual List Mode
-              // CHANGE: Use API_BASE_URL variable
               const response = await fetch(`${API_BASE_URL}/optimize`, {
                   method: 'POST',
                   headers: {'Content-Type': 'application/json'},
@@ -96,10 +88,8 @@ export default function App() {
 
           setResult(data);
 
-          // Fetch Graph Data (only if we have valid conditions found)
           if (data.status !== "No Entities Found" && conditionsForGraph.length > 0) {
               try {
-                  // CHANGE: Use API_BASE_URL variable
                   const graphRes = await fetch(`${API_BASE_URL}/graph`, {
                       method: 'POST',
                       headers: {'Content-Type': 'application/json'},
