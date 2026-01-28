@@ -8,5 +8,6 @@ python-multipart
 rapidfuzz
 transformers
 torch
+defusedxml
 
 

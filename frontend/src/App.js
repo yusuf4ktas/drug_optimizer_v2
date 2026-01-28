@@ -39,78 +39,86 @@ export default function App() {
   };
 
   const handleOptimize = async () => {
-    // Basic Validation
-    if (inputType === 'list' && conditions.length === 0) return;
-    if (inputType === 'text' && textInput.trim().length === 0) return;
+      // Basic Validation
+      if (inputType === 'list' && conditions.length === 0) return;
+      if (inputType === 'text' && textInput.trim().length === 0) return;
 
-    setLoading(true);
-    setError('');
-    setResult(null);
-    setGraphData(null);
-    setView('list'); // Reset view to list on new search
+      setLoading(true);
+      setError('');
+      setResult(null);
+      setGraphData(null);
+      setView('list'); // Reset view to list on new search
 
-    try {
-      let data;
-      let conditionsForGraph = conditions; // Default to manual list
+      const API_BASE_URL = process.env.REACT_APP_API_URL || "http://localhost:8000";
 
-      // Call the appropriate endpoint based on input type
-      if (inputType === 'text') {
-          // NLP Mode
-          const response = await fetch('http://localhost:8000/optimize/text', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ text: textInput, mode }),
-          });
+// NOTE: If you are using Vite, use this line instead:
+// const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
 
-          if (!response.ok) {
-            const errData = await response.json();
-            throw new Error(errData.detail || 'NLP Analysis failed');
+      try {
+          let data;
+          let conditionsForGraph = conditions; // Default to manual list
+
+          // Call the appropriate endpoint based on input type
+          if (inputType === 'text') {
+              // NLP Mode
+              // CHANGE: Use API_BASE_URL variable
+              const response = await fetch(`${API_BASE_URL}/optimize/text`, {
+                  method: 'POST',
+                  headers: {'Content-Type': 'application/json'},
+                  body: JSON.stringify({text: textInput, mode}),
+              });
+
+              if (!response.ok) {
+                  const errData = await response.json();
+                  throw new Error(errData.detail || 'NLP Analysis failed');
+              }
+              data = await response.json();
+
+              // If NLP found entities, use them for the graph later
+              if (data.nlp_source_entities && data.nlp_source_entities.length > 0) {
+                  conditionsForGraph = data.nlp_source_entities;
+              }
+          } else {
+              // Manual List Mode
+              // CHANGE: Use API_BASE_URL variable
+              const response = await fetch(`${API_BASE_URL}/optimize`, {
+                  method: 'POST',
+                  headers: {'Content-Type': 'application/json'},
+                  body: JSON.stringify({conditions, mode}),
+              });
+
+              if (!response.ok) {
+                  const errData = await response.json();
+                  throw new Error(errData.detail || 'Optimization failed');
+              }
+              data = await response.json();
           }
-          data = await response.json();
 
-          // If NLP found entities, use them for the graph later
-          if(data.nlp_source_entities && data.nlp_source_entities.length > 0) {
-             conditionsForGraph = data.nlp_source_entities;
-          }
-      } else {
-          // Manual List Mode
-          const response = await fetch('http://localhost:8000/optimize', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ conditions, mode }),
-          });
+          setResult(data);
 
-          if (!response.ok) {
-            const errData = await response.json();
-            throw new Error(errData.detail || 'Optimization failed');
+          // Fetch Graph Data (only if we have valid conditions found)
+          if (data.status !== "No Entities Found" && conditionsForGraph.length > 0) {
+              try {
+                  // CHANGE: Use API_BASE_URL variable
+                  const graphRes = await fetch(`${API_BASE_URL}/graph`, {
+                      method: 'POST',
+                      headers: {'Content-Type': 'application/json'},
+                      body: JSON.stringify({conditions: conditionsForGraph, mode}),
+                  });
+                  if (graphRes.ok) {
+                      const gData = await graphRes.json();
+                      setGraphData(gData);
+                  }
+              } catch (graphErr) {
+                  console.error("Graph fetch failed:", graphErr);
+              }
           }
-          data = await response.json();
+
+      } catch (err) {
+          setError(err.message || "An unexpected error occurred.");
+      } finally {
+          setLoading(false);
       }
-
-      setResult(data);
-
-      // Fetch Graph Data (only if we have valid conditions found)
-      if (data.status !== "No Entities Found" && conditionsForGraph.length > 0) {
-        try {
-            const graphRes = await fetch('http://localhost:8000/graph', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ conditions: conditionsForGraph, mode }),
-            });
-            if (graphRes.ok) {
-                const gData = await graphRes.json();
-                setGraphData(gData);
-            }
-        } catch (graphErr) {
-            console.error("Graph fetch failed:", graphErr);
-        }
-      }
-
-    } catch (err) {
-      setError(err.message || "An unexpected error occurred.");
-    } finally {
-      setLoading(false);
-    }
   };
 
   return (
