@@ -2,7 +2,7 @@
 
 A Python-based Clinical Decision Support System (CDSS) that uses **Integer Linear Programming (ILP)** and **Natural Language Processing (NLP)** to recommend minimal, safe, and cost-effective drug regimens for patients with multiple co-occurring conditions.
 
-## 📌 Project Overview
+## Project Overview
 
 This system tackles the problem of **polypharmacy** (taking too many medications) by finding the mathematical optimal set of drugs that:
 
@@ -17,7 +17,7 @@ This system tackles the problem of **polypharmacy** (taking too many medications
 ![Drug Details](frontend/public/detailed_list.png)
 
 
-## 🚀 Key Features
+## Key Features
 
 * **Hybrid Optimization Engine:**
 * **ILP Solver (`pulp`):** Guarantees the mathematically optimal solution.
@@ -39,7 +39,7 @@ This system tackles the problem of **polypharmacy** (taking too many medications
 
 
 
-## 🛠️ System Architecture
+## System Architecture
 
 1. **Data Ingestion:** Parses raw DrugBank XML into 17 structured CSVs.
 2. **Storage:** Loads data into a relational SQLite database (`drug_project.db`).
@@ -50,7 +50,7 @@ This system tackles the problem of **polypharmacy** (taking too many medications
 
 4. **API Layer:** FastAPI server exposing endpoints for React/Frontend consumption.
 
-## 📋 Prerequisites
+## Prerequisites
 
 * Python 3.8+
 * **DrugBank Database:** You must obtain the `full database.xml` from [DrugBank](https://go.drugbank.com/releases/latest) (requires a verified account).
@@ -69,7 +69,7 @@ numpy
 
 ```
 
-## ⚙️ Installation & Setup
+## Installation & Setup
 
 1. **Clone the Repository**
 ```bash
@@ -115,7 +115,7 @@ python server.py
 
 
 
-## 🔌 API Endpoints
+## API Endpoints
 
 ### 1. Optimize (Structured Input)
 
@@ -150,7 +150,7 @@ python server.py
 **POST** `/graph`
 Returns nodes and links for visualizing the Condition-Drug coverage network.
 
-## 🧪 Algorithm Details
+## Algorithm Details
 
 The ILP model minimizes the following objective function:
 
@@ -160,7 +160,7 @@ Where:
 * : Penalizes interactions (Direct: 500, Metabolic: 300).
 * : Penalizes intrinsic toxicity and long half-life.
 
-## 📂 Project Structure
+## Project Structure
 
 ```text
 ├── frontend/
@@ -179,6 +179,6 @@ Where:
 
 ```
 
-## ⚠️ Disclaimer
+## Disclaimer
 
 **This software is for research and educational purposes only.** It is **not** a substitute for professional medical advice, diagnosis, or treatment. The interaction data is derived from DrugBank but may not be exhaustive. Always consult a qualified healthcare provider before making medical decisions.
